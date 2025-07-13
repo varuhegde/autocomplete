@@ -24,7 +24,7 @@ public class AutoCompleteService {
         node.isEndOfWord = true;
     }
 
-    public List<String> getSuggestions(String prefix) {
+    public List<String> getSuggestions(String prefix, int page, int size) {
         if (prefix == null || prefix.isBlank()) return Collections.emptyList();
 
         TrieNode node = root;
@@ -34,6 +34,13 @@ public class AutoCompleteService {
             node = node.children.get(c);
             if (node == null) return Collections.emptyList();
         }
-        return node.words;
+
+        List<String> allSuggestions = node.words;
+        int start = page * size;
+        int end = Math.min(start + size, allSuggestions.size());
+
+        return (start < allSuggestions.size()) ?
+                allSuggestions.subList(start, end) :
+                Collections.emptyList();
     }
 }
