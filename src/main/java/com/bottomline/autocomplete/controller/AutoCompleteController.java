@@ -40,7 +40,7 @@ public class AutoCompleteController {
         }
 
         List<String> suggestions = autoCompleteService.getSuggestions(prefix, page, size);
-        String message = suggestions.isEmpty() ? "No suggestions found" : "Suggestions retrieved successfully";
+        String message = suggestions.isEmpty() ? "No suggestions found for :"+ prefix : "Suggestions retrieved successfully";
         SuggestionResponse response = new SuggestionResponse(suggestions, message);
         return ResponseEntity.ok(response);
     }
