@@ -1,15 +1,22 @@
 package com.bottomline.autocomplete.service;
 
+import com.bottomline.autocomplete.entity.Name;
+import com.bottomline.autocomplete.repository.NameRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class AutoCompleteService {
 
     private final TrieNode root;
+    private final NameRepository nameRepository;
 
-    public AutoCompleteService() {
+    public AutoCompleteService(NameRepository nameRepository) {
+        this.nameRepository = nameRepository;
         this.root = new TrieNode();
     }
 
@@ -19,9 +26,24 @@ public class AutoCompleteService {
 
         for (char c : lowerWord.toCharArray()) {
             node = node.children.computeIfAbsent(c, k -> new TrieNode());
-            node.words.add(word);  // store original case
+            node.words.add(word);
         }
         node.isEndOfWord = true;
+    }
+
+    public void processAndSaveNames(List<Name> names) {
+
+        Set<String> uniqueNameValues = new LinkedHashSet<>();
+        for (Name name : names) {
+            uniqueNameValues.add(name.getNameValue());
+        }
+
+        List<Name> uniqueNames = uniqueNameValues.stream()
+                .map(Name::new)
+                .toList();
+
+        nameRepository.saveAll(uniqueNames);
+        uniqueNames.forEach(name -> insert(name.getNameValue()));
     }
 
     public List<String> getSuggestions(String prefix, int page, int size) {
