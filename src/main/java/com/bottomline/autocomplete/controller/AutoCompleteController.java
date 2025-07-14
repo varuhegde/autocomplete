@@ -1,6 +1,7 @@
 package com.bottomline.autocomplete.controller;
 
 
+import com.bottomline.autocomplete.dto.SuggestionResponse;
 import com.bottomline.autocomplete.service.AutoCompleteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class AutoCompleteController {
     }
 
     @GetMapping("/autocomplete")
-    public ResponseEntity<List<String>> getSuggestions(
+    public ResponseEntity<SuggestionResponse> getSuggestions(
             @RequestParam String prefix,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -39,6 +40,8 @@ public class AutoCompleteController {
         }
 
         List<String> suggestions = autoCompleteService.getSuggestions(prefix, page, size);
-        return ResponseEntity.ok(suggestions);
+        String message = suggestions.isEmpty() ? "No suggestions found" : "Suggestions retrieved successfully";
+        SuggestionResponse response = new SuggestionResponse(suggestions, message);
+        return ResponseEntity.ok(response);
     }
 }
