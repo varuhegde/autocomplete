@@ -47,7 +47,6 @@ public class AutoCompleteService {
     }
 
     public List<String> getSuggestions(String prefix, int page, int size) {
-        if (prefix == null || prefix.isBlank()) return Collections.emptyList();
 
         TrieNode node = root;
         String lowerPrefix = prefix.toLowerCase();
